@@ -1,4 +1,4 @@
-const { spawn } = require('node-pty');
+
 const term = spawn('bash', [], {
   name: 'xterm-color',
   cwd: process.env.HOME,

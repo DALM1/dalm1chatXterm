@@ -1,57 +1,37 @@
 const { app, BrowserWindow } = require('electron');
-const pty = require('node-pty');
-const Terminal = require('term.js');
+const path = require('path');
 
 function createWindow() {
-  const win = new BrowserWindow({
+  const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: false, // désactivé pour des raisons de sécurité
+      contextIsolation: true, // activé pour des raisons de sécurité
+      enableRemoteModule: false, // désactivé pour des raisons de sécurité
+      preload: path.join(__dirname, 'preload.js'),
+      worldSafeExecuteJavaScript: true, // activé pour des raisons de sécurité
+      sandbox: true // activé pour des raisons de sécurité
     }
   });
 
-  const term = new Terminal({
-    cols: 80,
-    rows: 30,
-    useStyle: true,
-    screenKeys: true
+  mainWindow.loadFile(path.join(__dirname, 'index.html'));
+
+  mainWindow.on('closed', function () {
+    app.quit();
   });
-
-  term.on('data', (data) => {
-    term.write(data);
-  });
-
-  term.open(win.webContents);
-  term.focus();
-
-  const shellProcess = pty.spawn('/bin/bash', [], {
-    name: 'xterm-color',
-    cols: 80,
-    rows: 30,
-    cwd: process.env.HOME,
-    env: process.env
-  });
-
-  shellProcess.on('data', (data) => {
-    term.write(data);
-  });
-
-  win.loadFile('index.html');
 }
 
-app.whenReady().then(() => {
-  createWindow();
+app.on('ready', createWindow);
 
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
-    }
-  });
-});
-
-app.on('window-all-closed', () => {
+app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') {
     app.quit();
+  }
+});
+
+app.on('activate', function () {
+  if (BrowserWindow.getAllWindows().length === 0) {
+    createWindow();
   }
 });
