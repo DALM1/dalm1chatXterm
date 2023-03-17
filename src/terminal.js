@@ -1,11 +1,3 @@
-
-const term = spawn('bash', [], {
-  name: 'xterm-color',
-  cwd: process.env.HOME,
-  env: process.env
-});
-
-
 const { Terminal } = require('xterm');
 const { FitAddon } = require('xterm-addon-fit');
 

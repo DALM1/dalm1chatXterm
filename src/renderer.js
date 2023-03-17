@@ -1,7 +1,6 @@
-const { Terminal } = require('xterm');
-const { FitAddon } = require('xterm-addon-fit');
-const { BrowserWindow } = require('electron');
-
+import { Terminal } from 'xterm';
+import { FitAddon } from 'xterm-addon-fit';
+const { remote } = require('electron');
 
 // Create a new terminal object
 const terminal = new Terminal();
@@ -21,10 +20,4 @@ fitAddon.fit();
 // Write some text to the terminal
 terminal.write('Welcome to Terminal!\r\n');
 
-
-mainWindow = new BrowserWindow({
-    webPreferences: {
-      webSecurity: false
-    }
-  });
-  
+const mainWindow = remote.getCurrentWindow();
